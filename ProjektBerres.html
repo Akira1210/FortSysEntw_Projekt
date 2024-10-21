@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"> 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+        }
+
+        header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 2rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #3498db;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .image-container {
+            display: flex; /* Flexbox aktivieren */
+            flex-direction: column; /* Elemente in einer Spalte anordnen */
+            align-items: center; /* Horizontale Zentrierung */
+            justify-content: center; /* Vertikale Zentrierung */
+            position: relative; /* Für absolute Positionierung der Kinder */
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            overflow: hidden; /* Verhindert Überlauf */
+        }
+
+        .image-container img {
+            width: 100%;  /* Bild nimmt 100% der Breite ein */
+            max-height: 250px;  /* Maximalhöhe von 250px */
+            object-fit: cover;  /* Bild wird auf die Größe skaliert */
+            filter: brightness(90%);  /* Helligkeit um 10% reduziert */
+        }
+
+        .image-container h1 {   
+            position: absolute; /* Positionierung bleibt gleich */
+            top: 12%; /* Vertikale Position */
+            left: 50%; /* Horizontale Position */
+            transform: translate(-50%, -50%); /* Zentrierung */
+            color:white; /* Textfarbe */
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1; /* Damit der Text über dem Bild bleibt */
+        }
+
+        /* Actions and threads styles */
+        .actions {
+            margin-top: 1rem; /* Abstand zwischen Bild und Aktionen */
+            display: flex; /* Flexbox für horizontale Anordnung */
+            justify-content: center; /* Zentriert die Aktionen */
+        }
+
+        .actions button, .actions select {
+            padding: 0.5rem 1rem;
+            margin-left: 1rem;
+        }
+
+        .actions button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .actions button:hover {
+            background-color: #2980b9;
+        }
+
+        .threads {
+            margin-top: 2rem;
+        }
+
+        .thread {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+        }
+
+        .thread h2 {
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .thread .author {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            border-top: 2px solid lightgrey;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin: 0;
+        }
+        
+    
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-title">
+            <img src="logo.webp">
+            <span class="header-title">Community</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Über uns</a></li>
+                <li><a href="#">Kontakt</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="image-container">
+        <img src="community.avif">
+        <h1>Willkommen in der Community</h1>
+        
+        <div class="actions">
+            <button onclick="openModal()">Beitrag erstellen</button>
+            <select id="sortDropdown" onchange="sortThreads()">
+                <option value="date">Sortieren nach Datum</option>
+                <option value="title">Sortieren nach Titel</option>
+            </select>
+        </div>
+        <div class="threads" id="forum-threads">
+            <!-- Threads werden hier durch JavaScript eingefügt -->
+        </div>
+    </div>
+
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Neuen Beitrag erstellen</h2>
+            <form id="createThreadForm">
+                <label for="author">Autor:</label>
+                <input type="text" id="author" name="author" required><br><br>
+                <label for="date">Datum:</label>
+                <input type="date" id="date" name="date" required><br><br>
+                <label for="title">Titel:</label>
+                <input type="text" id="title" name="title" required><br><br>
+                <label for="content">Inhalt:</label>
+                <textarea id="content" name="content" required></textarea><br><br>
+                <button type="button" onclick="addThread()">Beitrag hinzufügen</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Community. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script>
+        let threads = [];
+        
+        const initialThreads = [
+            { author: "John", date: "2023-10-05", title: "Feedback zur Benutzeroberfläche", content: "Wir würden gerne euer Feedback zur neuen Benutzeroberfläche hören. Was gefällt euch, was können wir verbessern?" },
+            { author: "Lisa", date: "2023-10-04", title: "Neue API-Dokumentation", content: "Die API-Dokumentation wurde aktualisiert. Schaut euch die neuen Endpunkte und Beispiele an, um die Integration zu erleichtern." },
+            { author: "Tom", date: "2023-10-03", title: "Wartungsarbeiten am Wochenende", content: "Am kommenden Wochenende werden Wartungsarbeiten durchgeführt. Die App wird für einige Stunden nicht verfügbar sein." },
+            { author: "Anna", date: "2023-10-02", title: "Bug im Login-System", content: "Es gibt einen Bug im Login-System, der dazu führt, dass einige Benutzer sich nicht anmelden können." },
+            { author: "Max", date: "2023-10-01", title: "Neues Feature in der App", content: "Wir haben ein neues Feature in der App hinzugefügt, das die Benutzerfreundlichkeit verbessert." }
+        ];
+
+        function loadThreads() {
+            const storedThreads = localStorage.getItem("threads");
+            if (storedThreads) {
+                threads = JSON.parse(storedThreads); // Konvertiere die JSON-Zeichenfolge zurück in ein Array
+            } else {
+                // Wenn keine Threads vorhanden sind, die initialen Threads speichern
+                threads = initialThreads; // Setze die Threads auf die initialen Werte
+                saveThreads(); // Speichere die initialen Threads im localStorage
+            }
+        }
+
+        function saveThreads() {
+            localStorage.setItem("threads", JSON.stringify(threads)); // Speichere das Array als JSON-Zeichenfolge
+        }
+
+
+        function displayThreads() {
+            const container = document.getElementById("forum-threads");
+            container.innerHTML = "";
+            threads.forEach((thread, index) => {
+                const threadDiv = document.createElement("div");
+                threadDiv.classList.add("thread");
+                threadDiv.innerHTML = `
+                    <p class="author">${thread.author} - ${thread.date}</p>
+                    <h2>${thread.title}</h2>
+                    <p>${thread.content}</p>
+                    <button onclick="deleteThread(${index})">Beitrag löschen</button> <!-- Neu -->
+                `;
+                container.appendChild(threadDiv);
+            });
+        }
+        function sortThreads() {
+            const sortOption = document.getElementById("sortDropdown").value;
+        
+            if (sortOption === "date") {
+                // Sortieren nach Datum (neueste zuerst)
+                threads.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else if (sortOption === "title") {
+                // Sortieren nach Titel (alphabetisch)
+                threads.sort((a, b) => a.title.localeCompare(b.title));
+            }
+
+            // Neu sortierte Threads anzeigen
+            displayThreads();
+            
+        }
+
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('createThreadForm').reset();
+        }
+
+        window.onload = function() {
+            loadThreads(); // Threads aus localStorage laden
+            displayThreads(); // Zeige die geladenen Threads an
+            document.getElementById("year").innerText = new Date().getFullYear(); // Jahr im Footer aktualisieren
+        };
+
+        function addThread() {
+            const author = document.getElementById('author').value;
+            const date = document.getElementById('date').value;
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            //Debugging
+            console.log({ author, date, title, content});
+            // Neuer Beitrag wird dem threads-Array hinzugefügt
+            threads.push({ author, date, title, content });
+            saveThreads();
+
+            // Modal schließen und Threads neu anzeigen
+            closeModal();
+            displayThreads();
+        }
+        function deleteThread(index) {
+            threads.splice(index, 1);  // Entferne den Beitrag aus dem Array
+            saveThreads();
+            displayThreads();  // Threads neu anzeigen
+        }
+
+        function init() {
+            loadThreads(); // Threads beim Laden der Seite laden
+            displayThreads(); // Threads anzeigen
+        }
+
+        // Rufe die Init-Funktion auf, wenn die Seite geladen wird
+        init();
+
+
+        // Dynamisches Jahr in der Fußzeile
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
